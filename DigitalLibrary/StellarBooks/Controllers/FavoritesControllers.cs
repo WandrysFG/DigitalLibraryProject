@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using StellarBoocks.Entities;
+using StellarBooks.Entities;
 using Microsoft.EntityFrameworkCore;
-using StellarBoocks.Data;
-using StellarBoocks.DTOs;
+using StellarBooks.Data;
+using StellarBooks.DTOs;
 
-namespace StellarBoocks.Controllers
+namespace StellarBooks.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -23,6 +23,23 @@ namespace StellarBoocks.Controllers
             var favorites = await _context.Favorites
                 .Include(f => f.User)
                 .Include(f => f.Tale)
+                .Select(f => new
+                {
+                    f.Id,
+                    f.DateAdded,
+                    User = new
+                    {
+                        f.User.Id,
+                        f.User.FirstName,
+                        f.User.LastName
+                    },
+                    Tale = new
+                    {
+                        f.Tale.Id,
+                        f.Tale.Title,
+                        f.Tale.RecommendedAge
+                    }
+                })
                 .ToListAsync();
 
             return Ok(favorites);
@@ -34,6 +51,24 @@ namespace StellarBoocks.Controllers
             var favorite = await _context.Favorites
                 .Include(f => f.User)
                 .Include(f => f.Tale)
+                        .Where(f => f.Id == id)
+                .Select(f => new
+                {
+                    f.Id,
+                    f.DateAdded,
+                    User = new
+                    {
+                        f.User.Id,
+                        f.User.FirstName,
+                        f.User.LastName
+                    },
+                    Tale = new
+                    {
+                        f.Tale.Id,
+                        f.Tale.Title,
+                        f.Tale.RecommendedAge
+                    }
+                })
                 .FirstOrDefaultAsync(f => f.Id == id);
 
             if (favorite == null)

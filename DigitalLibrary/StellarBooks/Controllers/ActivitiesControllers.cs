@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using StellarBoocks.Entities;
-using StellarBoocks.Data;
-using StellarBoocks.DTOs;
+using StellarBooks.Entities;
+using StellarBooks.Data;
+using StellarBooks.DTOs;
 
-namespace StellarBoocks.Controllers
+namespace StellarBooks.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -22,6 +22,20 @@ namespace StellarBoocks.Controllers
         {
             var activities = await _context.Activities
                 .Include(a => a.Tale)
+                        .Select(a => new
+                        {
+                            a.Id,
+                            a.TaleId,
+                            a.ActivityType,
+                            a.Description,
+                            a.MultimediaResource,
+                            Tale = new
+                            {
+                                a.Tale.Id,
+                                a.Tale.Title,
+                                a.Tale.RecommendedAge
+                            }
+                        })
                 .ToListAsync();
 
             return Ok(activities);
@@ -32,6 +46,21 @@ namespace StellarBoocks.Controllers
         {
             var activity = await _context.Activities
                 .Include(a => a.Tale)
+                        .Select(a => new
+                        {
+                            a.Id,
+                            a.TaleId,
+                            a.ActivityType,
+                            a.Description,
+                            a.MultimediaResource,
+                            Tale = new
+                            {
+                                a.Tale.Id,
+                                a.Tale.Title,
+                                a.Tale.RecommendedAge
+                            }
+                        })
+
                 .FirstOrDefaultAsync(a => a.Id == id);
 
             if (activity == null)

@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using StellarBoocks.Entities;
-using StellarBoocks.Data;
-using StellarBoocks.DTOs;
+using StellarBooks.Entities;
+using StellarBooks.Data;
+using StellarBooks.DTOs;
 
-namespace StellarBoocks.Controllers
+namespace StellarBooks.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

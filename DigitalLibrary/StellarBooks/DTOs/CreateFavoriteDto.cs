@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace StellarBoocks.DTOs
+namespace StellarBooks.DTOs
 {
     public class CreateFavoriteDto
     {

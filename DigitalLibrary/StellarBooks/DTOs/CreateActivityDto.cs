@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace StellarBoocks.DTOs
+namespace StellarBooks.DTOs
 {
     public class CreateActivityDto
     {

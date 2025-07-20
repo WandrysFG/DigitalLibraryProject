@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using StellarBoocks.Data;
+using StellarBooks.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 

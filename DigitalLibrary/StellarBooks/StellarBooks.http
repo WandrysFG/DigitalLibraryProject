@@ -1,0 +1,6 @@
+@StellarBooks_HostAddress = http://localhost:5016
+
+GET {{StellarBooks_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

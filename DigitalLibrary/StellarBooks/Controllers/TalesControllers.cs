@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc;
-using StellarBoocks.Entities;
-using StellarBoocks.Data;
-using StellarBoocks.DTOs;
+using StellarBooks.Entities;
+using StellarBooks.Data;
+using StellarBooks.DTOs;
 
-namespace StellarBoocks.Controllers
+namespace StellarBooks.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -20,14 +20,43 @@ namespace StellarBoocks.Controllers
         [HttpGet]
         public IActionResult GetTales()
         {
-            var tales = _context.Tales.ToList();
+            var tales = _context.Tales
+                .Select(t => new
+                {
+                    t.Id,
+                    t.Title,
+                    t.RecommendedAge,
+                    t.Theme,
+                    t.Content,
+                    t.CoverImage,
+                    t.NarrationAudio,
+                    t.IsAvailable,
+                    t.PublicationDate
+                })
+                .ToList();
+
             return Ok(tales);
         }
 
         [HttpGet("{id:int}")]
         public IActionResult GetTaleById(int id)
         {
-            var tale = _context.Tales.FirstOrDefault(t => t.Id == id);
+            var tale = _context.Tales
+                .Where(t => t.Id == id)
+                .Select(t => new
+                {
+                    t.Id,
+                    t.Title,
+                    t.RecommendedAge,
+                    t.Theme,
+                    t.Content,
+                    t.CoverImage,
+                    t.NarrationAudio,
+                    t.IsAvailable,
+                    t.PublicationDate
+                })
+                .FirstOrDefault();
+
             if (tale == null)
                 return NotFound($"Tale with ID {id} not found.");
             return Ok(tale);

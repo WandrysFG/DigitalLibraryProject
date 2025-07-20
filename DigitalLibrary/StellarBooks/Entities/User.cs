@@ -1,9 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 
-namespace StellarBoocks.DTOs
+namespace StellarBooks.Entities
 {
-    public class CreateUserDto
+    [Table("Users")]
+    public class User
     {
+        [Key]
+        public int Id { get; set; }
+
         [Required, StringLength(50)]
         public string FirstName { get; set; }
 
@@ -19,6 +25,13 @@ namespace StellarBoocks.DTOs
         [Required, StringLength(20)]
         public string UserType { get; set; } = "Reader";
 
+        [Column(TypeName = "date")]
+        public DateTime RegistrationDate { get; set; } = DateTime.Today;
+
         public bool IsActive { get; set; } = true;
+
+        public virtual ICollection<Favorite> Favorites { get; set; }
+
+
     }
 }

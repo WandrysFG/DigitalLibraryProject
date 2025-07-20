@@ -1,15 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.Globalization;
 
-namespace StellarBoocks.Entities
+namespace StellarBoocks.DTOs
 {
-    [Table("Tales")]
-    public class Tale
+    public class CreateTaleDto
     {
-        [Key]
-        public int Id { get; set; }
-
         [Required, StringLength(100)]
         public string Title { get; set; }
 
@@ -30,11 +25,6 @@ namespace StellarBoocks.Entities
 
         public bool IsAvailable { get; set; } = true;
 
-        [Column(TypeName = "date")]
         public DateTime PublicationDate { get; set; } = DateTime.Today;
-
-        public virtual ICollection<Activity> Activities { get; set; }
-        public virtual ICollection<Favorite> Favorites { get; set; }
     }
-
 }

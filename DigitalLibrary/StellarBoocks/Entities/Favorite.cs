@@ -24,5 +24,10 @@ namespace StellarBoocks.Entities
 
         [Column(TypeName = "date")]
         public DateTime DateAdded { get; set; } = DateTime.Today;
+
+        public string username()
+        {
+            return User?.FirstName ?? string.Empty;
+        }
     }
 }

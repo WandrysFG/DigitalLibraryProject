@@ -31,5 +31,7 @@ namespace StellarBoocks.Entities
         public bool IsActive { get; set; } = true;
 
         public virtual ICollection<Favorite> Favorites { get; set; }
+
+
     }
 }

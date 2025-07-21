@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using StellarBooks.Entities;
-using StellarBooks.Data;
 using StellarBooks.DTOs;
+using StellarBooks.Domain.Entities;
+using StellarBooks.Infrastructure.Repositories;
 
 namespace StellarBooks.Controllers
 {
@@ -10,67 +9,64 @@ namespace StellarBooks.Controllers
     [Route("api/[controller]")]
     public class ActivitiesController : ControllerBase
     {
-        private readonly StellarBocksApplicationDbContext _context;
+        private readonly ActivityRepository _activityRepository;
 
-        public ActivitiesController(StellarBocksApplicationDbContext context)
+        public ActivitiesController(ActivityRepository activityRepository)
         {
-            _context = context;
+            _activityRepository = activityRepository;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetActivities()
+        public IActionResult GetActivities()
         {
-            var activities = await _context.Activities
-                .Include(a => a.Tale)
-                        .Select(a => new
-                        {
-                            a.Id,
-                            a.TaleId,
-                            a.ActivityType,
-                            a.Description,
-                            a.MultimediaResource,
-                            Tale = new
-                            {
-                                a.Tale.Id,
-                                a.Tale.Title,
-                                a.Tale.RecommendedAge
-                            }
-                        })
-                .ToListAsync();
+            var activities = _activityRepository.GetAllActivities();
 
-            return Ok(activities);
+            var result = activities.Select(a => new
+            {
+                a.Id,
+                a.TaleId,
+                a.ActivityType,
+                a.Description,
+                a.MultimediaResource,
+                Tale = a.Tale == null ? null : new
+                {
+                    a.Tale.Id,
+                    a.Tale.Title,
+                    a.Tale.RecommendedAge
+                }
+            });
+
+            return Ok(result);
         }
 
         [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetActivityById(int id)
+        public IActionResult GetActivityById(int id)
         {
-            var activity = await _context.Activities
-                .Include(a => a.Tale)
-                        .Select(a => new
-                        {
-                            a.Id,
-                            a.TaleId,
-                            a.ActivityType,
-                            a.Description,
-                            a.MultimediaResource,
-                            Tale = new
-                            {
-                                a.Tale.Id,
-                                a.Tale.Title,
-                                a.Tale.RecommendedAge
-                            }
-                        })
-
-                .FirstOrDefaultAsync(a => a.Id == id);
+            var activity = _activityRepository.GetActivityById(id);
 
             if (activity == null)
                 return NotFound($"Activity with ID {id} not found.");
 
-            return Ok(activity);
+            var result = new
+            {
+                activity.Id,
+                activity.TaleId,
+                activity.ActivityType,
+                activity.Description,
+                activity.MultimediaResource,
+                Tale = activity.Tale == null ? null : new
+                {
+                    activity.Tale.Id,
+                    activity.Tale.Title,
+                    activity.Tale.RecommendedAge
+                }
+            };
+
+            return Ok(result);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateActivity([FromBody] CreateActivityDto dto)
+        public IActionResult CreateActivity([FromBody] CreateActivityDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -83,40 +79,35 @@ namespace StellarBooks.Controllers
                 MultimediaResource = dto.MultimediaResource
             };
 
-            _context.Activities.Add(activity);
-            await _context.SaveChangesAsync();
+            var id = _activityRepository.AddActivity(activity);
 
-            return Ok(new { id = activity.Id });
+            return Ok(new { id });
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> UpdateActivity(int id, [FromBody] UpdateActivityDto dto)
+        public IActionResult UpdateActivity(int id, [FromBody] UpdateActivityDto dto)
         {
-            var activity = await _context.Activities.FindAsync(id);
-            if (activity == null)
+            var existing = _activityRepository.GetActivityById(id);
+            if (existing == null)
                 return NotFound($"Activity with ID {id} not found.");
 
-            activity.TaleId = dto.TaleId;
-            activity.ActivityType = dto.ActivityType;
-            activity.Description = dto.Description;
-            activity.MultimediaResource = dto.MultimediaResource;
+            existing.TaleId = dto.TaleId;
+            existing.ActivityType = dto.ActivityType;
+            existing.Description = dto.Description;
+            existing.MultimediaResource = dto.MultimediaResource;
 
-            _context.Activities.Update(activity);
-            await _context.SaveChangesAsync();
-
+            _activityRepository.UpdateActivity(existing);
             return NoContent();
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<IActionResult> DeleteActivity(int id)
+        public IActionResult DeleteActivity(int id)
         {
-            var activity = await _context.Activities.FindAsync(id);
-            if (activity == null)
+            var existing = _activityRepository.GetActivityById(id);
+            if (existing == null)
                 return NotFound($"Activity with ID {id} not found.");
 
-            _context.Activities.Remove(activity);
-            await _context.SaveChangesAsync();
-
+            _activityRepository.DeleteActivity(id);
             return NoContent();
         }
     }

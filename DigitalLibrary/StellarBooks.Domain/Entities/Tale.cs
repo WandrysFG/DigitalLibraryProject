@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 
-namespace StellarBooks.Entities
+namespace StellarBooks.Domain.Entities
 {
     [Table("Tales")]
     public class Tale

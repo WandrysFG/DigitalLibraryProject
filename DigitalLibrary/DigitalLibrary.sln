@@ -5,6 +5,10 @@ VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StellarBooks", "StellarBooks\StellarBooks.csproj", "{5810140D-54CE-4641-8521-C64CF830960C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StellarBooks.Infrastructure", "StellarBooks.Infrastructure\StellarBooks.Infrastructure.csproj", "{D6360A57-CBF6-4EC5-AC32-61BB0E72F53E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StellarBooks.Domain", "StellarBooks.Domain\StellarBooks.Domain.csproj", "{4108EA38-CF46-45CA-A8B2-0B7B528F3A02}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{5810140D-54CE-4641-8521-C64CF830960C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5810140D-54CE-4641-8521-C64CF830960C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5810140D-54CE-4641-8521-C64CF830960C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6360A57-CBF6-4EC5-AC32-61BB0E72F53E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6360A57-CBF6-4EC5-AC32-61BB0E72F53E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6360A57-CBF6-4EC5-AC32-61BB0E72F53E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6360A57-CBF6-4EC5-AC32-61BB0E72F53E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4108EA38-CF46-45CA-A8B2-0B7B528F3A02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4108EA38-CF46-45CA-A8B2-0B7B528F3A02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4108EA38-CF46-45CA-A8B2-0B7B528F3A02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4108EA38-CF46-45CA-A8B2-0B7B528F3A02}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

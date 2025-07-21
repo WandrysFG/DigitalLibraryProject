@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
 
-namespace StellarBooks.Entities
+namespace StellarBooks.Domain.Entities
 {
     [Table("Favorites")]
     public class Favorite

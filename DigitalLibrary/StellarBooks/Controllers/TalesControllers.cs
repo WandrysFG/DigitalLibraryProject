@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc;
-using StellarBooks.Entities;
-using StellarBooks.Data;
 using StellarBooks.DTOs;
+using StellarBooks.Domain.Entities;
+using StellarBooks.Infrastructure.Repositories;
 
 namespace StellarBooks.Controllers
 {
@@ -10,17 +9,17 @@ namespace StellarBooks.Controllers
     [Route("api/[controller]")]
     public class TalesController : ControllerBase
     {
-        private readonly StellarBocksApplicationDbContext _context;
+        private readonly TaleRepository _taleRepository;
 
-        public TalesController(StellarBocksApplicationDbContext context)
+        public TalesController(TaleRepository taleRepository)
         {
-            _context = context;
+            _taleRepository = taleRepository;
         }
 
         [HttpGet]
         public IActionResult GetTales()
         {
-            var tales = _context.Tales
+            var tales = _taleRepository.GetAllTales()
                 .Select(t => new
                 {
                     t.Id,
@@ -41,25 +40,24 @@ namespace StellarBooks.Controllers
         [HttpGet("{id:int}")]
         public IActionResult GetTaleById(int id)
         {
-            var tale = _context.Tales
-                .Where(t => t.Id == id)
-                .Select(t => new
-                {
-                    t.Id,
-                    t.Title,
-                    t.RecommendedAge,
-                    t.Theme,
-                    t.Content,
-                    t.CoverImage,
-                    t.NarrationAudio,
-                    t.IsAvailable,
-                    t.PublicationDate
-                })
-                .FirstOrDefault();
-
+            var tale = _taleRepository.GetTaleById(id);
             if (tale == null)
                 return NotFound($"Tale with ID {id} not found.");
-            return Ok(tale);
+
+            var result = new
+            {
+                tale.Id,
+                tale.Title,
+                tale.RecommendedAge,
+                tale.Theme,
+                tale.Content,
+                tale.CoverImage,
+                tale.NarrationAudio,
+                tale.IsAvailable,
+                tale.PublicationDate
+            };
+
+            return Ok(result);
         }
 
         [HttpPost]
@@ -80,8 +78,7 @@ namespace StellarBooks.Controllers
                 PublicationDate = System.DateTime.UtcNow.Date
             };
 
-            _context.Tales.Add(tale);
-            _context.SaveChanges();
+            _taleRepository.AddTale(tale);
 
             return Ok(new { id = tale.Id });
         }
@@ -92,7 +89,7 @@ namespace StellarBooks.Controllers
             if (request == null)
                 return BadRequest("Tale is null or ID mismatch.");
 
-            var existingTale = _context.Tales.FirstOrDefault(t => t.Id == id);
+            var existingTale = _taleRepository.GetTaleById(id);
             if (existingTale == null)
                 return NotFound($"Tale with ID {id} not found.");
 
@@ -105,8 +102,7 @@ namespace StellarBooks.Controllers
             existingTale.IsAvailable = request.IsAvailable;
             existingTale.PublicationDate = request.PublicationDate;
 
-            _context.Tales.Update(existingTale);
-            _context.SaveChanges();
+            _taleRepository.UpdateTale(existingTale);
 
             return NoContent();
         }
@@ -114,12 +110,11 @@ namespace StellarBooks.Controllers
         [HttpDelete("{id:int}")]
         public IActionResult DeleteTale(int id)
         {
-            var tale = _context.Tales.FirstOrDefault(t => t.Id == id);
+            var tale = _taleRepository.GetTaleById(id);
             if (tale == null)
                 return NotFound($"Tale with ID {id} not found.");
 
-            _context.Tales.Remove(tale);
-            _context.SaveChanges();
+            _taleRepository.DeleteTale(id);
 
             return NoContent();
         }

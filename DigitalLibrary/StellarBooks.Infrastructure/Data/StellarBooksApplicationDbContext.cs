@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using StellarBooks.Entities;
+using StellarBooks.Domain.Entities;
 
-namespace StellarBooks.Data
+namespace StellarBooks.Infrastructure.Data
 {
     public class StellarBocksApplicationDbContext : DbContext
     {

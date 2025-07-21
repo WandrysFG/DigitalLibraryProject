@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 
-namespace StellarBooks.Entities
+namespace StellarBooks.Domain.Entities
 {
     [Table("Users")]
     public class User
@@ -31,7 +31,5 @@ namespace StellarBooks.Entities
         public bool IsActive { get; set; } = true;
 
         public virtual ICollection<Favorite> Favorites { get; set; }
-
-
     }
 }

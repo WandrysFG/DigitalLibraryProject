@@ -12,4 +12,10 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\StellarBooks.Domain\StellarBooks.Domain.csproj" />
+    <ProjectReference Include="..\StellarBooks.Infrastructure\StellarBooks.Infrastructure.csproj" />
+    <ProjectReference Include="StellarBooks.Domain\StellarBooks.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

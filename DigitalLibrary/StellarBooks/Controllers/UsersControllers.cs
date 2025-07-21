@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using StellarBooks.Entities;
-using StellarBooks.Data;
 using StellarBooks.DTOs;
+using StellarBooks.Domain.Entities;
+using StellarBooks.Infrastructure.Data;
+using StellarBooks.Infrastructure.Repositories;
 
 namespace StellarBooks.Controllers
 {
@@ -9,24 +10,25 @@ namespace StellarBooks.Controllers
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
-        private readonly StellarBocksApplicationDbContext _context;
+        private readonly UserRepository _userRepository;
 
-        public UsersController(StellarBocksApplicationDbContext context)
+        public UsersController(UserRepository userRepository)
         {
-            _context = context;
+            _userRepository = userRepository;
         }
 
         [HttpGet]
         public IActionResult GetUsers()
         {
-            var users = _context.Users.ToList();
+            var users = _userRepository.GetAllUsers();
             return Ok(users);
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet]
+        [Route("{id:int}")]
         public IActionResult GetUserById(int id)
         {
-            var user = _context.Users.FirstOrDefault(u => u.Id == id);
+            var user = _userRepository.GetUserById(id);
             if (user == null)
                 return NotFound($"User with ID {id} not found.");
             return Ok(user);
@@ -49,10 +51,9 @@ namespace StellarBooks.Controllers
                 RegistrationDate = System.DateTime.UtcNow.Date
             };
 
-            _context.Users.Add(user);
-            _context.SaveChanges();
+            var userId = _userRepository.AddUser(user);
 
-            return Ok(new { id = user.Id });
+            return Ok(new { id = userId });
         }
 
         [HttpPut("{id:int}")]
@@ -61,7 +62,7 @@ namespace StellarBooks.Controllers
             if (request == null)
                 return BadRequest("User is null or ID mismatch.");
 
-            var existingUser = _context.Users.FirstOrDefault(u => u.Id == id);
+            var existingUser = _userRepository.GetUserById(request.Id);
             if (existingUser == null)
                 return NotFound($"User with ID {id} not found.");
 
@@ -73,22 +74,19 @@ namespace StellarBooks.Controllers
             existingUser.IsActive = request.IsActive;
             existingUser.RegistrationDate = request.RegistrationDate;
 
-            _context.Users.Update(existingUser);
-            _context.SaveChanges();
-
+            _userRepository.UpdateUser(existingUser);
             return NoContent();
         }
 
         [HttpDelete("{id:int}")]
         public IActionResult DeleteUser(int id)
         {
-            var user = _context.Users.FirstOrDefault(u => u.Id == id);
+            var user = _userRepository.GetUserById(id);
             if (user == null)
+            {
                 return NotFound($"User with ID {id} not found.");
-
-            _context.Users.Remove(user);
-            _context.SaveChanges();
-
+            }
+            _userRepository.DeleteUser(id);
             return NoContent();
         }
     }

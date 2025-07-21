@@ -1,11 +1,18 @@
 using Microsoft.EntityFrameworkCore;
-using StellarBooks.Data;
+using StellarBooks.Infrastructure.Data;
+using StellarBooks.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDbContext<StellarBocksApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<TaleRepository>();
+builder.Services.AddScoped<FavoriteRepository>();
+builder.Services.AddScoped<ActivityRepository>();
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

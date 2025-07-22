@@ -17,9 +17,9 @@ namespace StellarBooks.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetActivities()
+        public async Task<IActionResult> GetActivities()
         {
-            var activities = _activityRepository.GetAllActivities();
+            var activities = await _activityRepository.GetAllAsync();
 
             var result = activities.Select(a => new
             {
@@ -40,9 +40,9 @@ namespace StellarBooks.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public IActionResult GetActivityById(int id)
+        public async Task<IActionResult> GetActivityById(int id)
         {
-            var activity = _activityRepository.GetActivityById(id);
+            var activity = await _activityRepository.GetByIdAsync(id);
 
             if (activity == null)
                 return NotFound($"Activity with ID {id} not found.");
@@ -66,7 +66,7 @@ namespace StellarBooks.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateActivity([FromBody] CreateActivityDto dto)
+        public async Task<IActionResult> CreateActivity([FromBody] CreateActivityDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -79,15 +79,15 @@ namespace StellarBooks.Controllers
                 MultimediaResource = dto.MultimediaResource
             };
 
-            var id = _activityRepository.AddActivity(activity);
+            var id = await _activityRepository.AddAsync(activity);
 
             return Ok(new { id });
         }
 
         [HttpPut("{id:int}")]
-        public IActionResult UpdateActivity(int id, [FromBody] UpdateActivityDto dto)
+        public async Task<IActionResult> UpdateActivity(int id, [FromBody] UpdateActivityDto dto)
         {
-            var existing = _activityRepository.GetActivityById(id);
+            var existing = await _activityRepository.GetByIdAsync(id);
             if (existing == null)
                 return NotFound($"Activity with ID {id} not found.");
 
@@ -96,18 +96,18 @@ namespace StellarBooks.Controllers
             existing.Description = dto.Description;
             existing.MultimediaResource = dto.MultimediaResource;
 
-            _activityRepository.UpdateActivity(existing);
+            await _activityRepository.UpdateAsync(existing);
             return NoContent();
         }
 
         [HttpDelete("{id:int}")]
-        public IActionResult DeleteActivity(int id)
+        public async Task<IActionResult> DeleteActivity(int id)
         {
-            var existing = _activityRepository.GetActivityById(id);
-            if (existing == null)
+            var activity = await _activityRepository.GetByIdAsync(id);
+            if (activity == null)
                 return NotFound($"Activity with ID {id} not found.");
 
-            _activityRepository.DeleteActivity(id);
+            await _activityRepository.DeleteAsync(activity);
             return NoContent();
         }
     }

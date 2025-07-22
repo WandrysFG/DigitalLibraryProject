@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
+using System.Text.Json.Serialization;
 
 namespace StellarBooks.Domain.Entities
 {
@@ -30,6 +31,6 @@ namespace StellarBooks.Domain.Entities
 
         public bool IsActive { get; set; } = true;
 
-        public virtual ICollection<Favorite> Favorites { get; set; }
+        public virtual ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
     }
 }

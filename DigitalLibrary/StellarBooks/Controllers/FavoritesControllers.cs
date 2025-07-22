@@ -18,12 +18,12 @@ namespace StellarBooks.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetFavorites()
+        public async Task<IActionResult> GetFavorites()
         {
-            var favorites = _favoriteRepository.GetAllFavorites()
-                .Select(f => new
+            var favorites = await _favoriteRepository.GetAllWithUserAndTale();
+                var result = favorites.Select(f => new
                 {
-                    f.Id,
+                f.Id,
                     f.DateAdded,
                     User = new
                     {
@@ -35,17 +35,16 @@ namespace StellarBooks.Controllers
                     {
                         f.Tale.Id,
                         f.Tale.Title,
-                        f.Tale.RecommendedAge
                     }
                 }).ToList();
 
-            return Ok(favorites);
+            return Ok(result);
         }
 
         [HttpGet("{id:int}")]
-        public IActionResult GetFavoriteById(int id)
+        public async Task<IActionResult> GetFavoriteById(int id)
         {
-            var favorite = _favoriteRepository.GetFavoriteById(id);
+            var favorite = await _favoriteRepository.GetByIdWithUserAndTale(id);
             if (favorite == null)
                 return NotFound($"Favorite with ID {id} not found.");
 
@@ -63,7 +62,6 @@ namespace StellarBooks.Controllers
                 {
                     favorite.Tale.Id,
                     favorite.Tale.Title,
-                    favorite.Tale.RecommendedAge
                 }
             };
 
@@ -71,21 +69,10 @@ namespace StellarBooks.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateFavorite([FromBody] CreateFavoriteDto dto)
+        public async Task<IActionResult> CreateFavorite([FromBody] CreateFavoriteDto dto)
         {
-            //if (!ModelState.IsValid)
-            //    return BadRequest(ModelState);
-
-            //var favorite = new Favorite
-            //{
-            //    UserId = dto.UserId,
-            //    TaleId = dto.TaleId,
-            //    DateAdded = System.DateTime.UtcNow.Date
-            //};
-
-            //_favoriteRepository.AddFavorite(favorite);
-
-            //return Ok(new { id = favorite.Id });
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
             var favorite = new Favorite
             {
@@ -94,15 +81,15 @@ namespace StellarBooks.Controllers
                 DateAdded = DateTime.UtcNow.Date
             };
 
-            _favoriteRepository.AddFavorite(favorite);
+            await _favoriteRepository.AddAsync(favorite);
 
             return Ok(new { id = favorite.Id });
         }
 
         [HttpPut("{id:int}")]
-        public IActionResult UpdateFavorite(int id, [FromBody] UpdateFavoriteDto dto)
+        public async Task<IActionResult> UpdateFavorite(int id, [FromBody] UpdateFavoriteDto dto)
         {
-            var favorite = _favoriteRepository.GetFavoriteById(id);
+            var favorite = await _favoriteRepository.GetByIdAsync(id);
             if (favorite == null)
                 return NotFound($"Favorite with ID {id} not found.");
 
@@ -110,19 +97,19 @@ namespace StellarBooks.Controllers
             favorite.TaleId = dto.TaleId;
             favorite.DateAdded = dto.DateAdded;
 
-            _favoriteRepository.UpdateFavorite(favorite);
+            await _favoriteRepository.UpdateAsync(favorite);
 
             return NoContent();
         }
 
         [HttpDelete("{id:int}")]
-        public IActionResult DeleteFavorite(int id)
+        public async Task<IActionResult> DeleteFavorite(int id)
         {
-            var favorite = _favoriteRepository.GetFavoriteById(id);
+            var favorite = await _favoriteRepository.GetByIdAsync(id);
             if (favorite == null)
                 return NotFound($"Favorite with ID {id} not found.");
 
-            _favoriteRepository.DeleteFavorite(id);
+            _favoriteRepository.DeleteAsync(favorite);
 
             return NoContent();
         }

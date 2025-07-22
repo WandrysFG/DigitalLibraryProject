@@ -1,5 +1,7 @@
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using StellarBooks.Infrastructure.Data;
+using StellarBooks.Infrastructure.Data.Repositories;
 using StellarBooks.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,8 +15,12 @@ builder.Services.AddScoped<TaleRepository>();
 builder.Services.AddScoped<FavoriteRepository>();
 builder.Services.AddScoped<ActivityRepository>();
 
+builder.Services.AddControllers().AddJsonOptions(options=>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+    });
 
-builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

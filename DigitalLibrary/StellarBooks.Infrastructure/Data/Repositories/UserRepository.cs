@@ -1,49 +1,34 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using StellarBooks.Domain.Entities;
 using StellarBooks.Infrastructure.Data;
+using StellarBooks.Infrastructure.Data.Repositories;
 
 namespace StellarBooks.Infrastructure.Repositories
 {
-    public class UserRepository
+    public class UserRepository : GenericRepository<User>
     {
         private readonly StellarBocksApplicationDbContext _context;
 
-        public UserRepository(StellarBocksApplicationDbContext context)
+        public UserRepository(StellarBocksApplicationDbContext context) : base(context)
         {
             _context = context;
         }
 
-        public async Task<List<User>> GetAllUsers()
+        public async Task<List<User>> GetAllUsersWithFavoritesAndTales()
         {
-            return await _context.Users.Where(u => u.IsActive).ToListAsync();
+            return await _context.Users
+                .Where(u => u.IsActive)
+                .Include(u => u.Favorites)
+                    .ThenInclude(f => f.Tale)
+                .ToListAsync();
         }
 
-        public User GetUserById(int id)
+        public async Task<User?> GetUserWithFavoritesAndTalesById(int id)
         {
-            return _context.Users.FirstOrDefault(u => u.Id == id);
-        }
-
-        public int AddUser(User user)
-        {
-            _context.Users.Add(user);
-            _context.SaveChanges();
-            return user.Id;
-        }
-
-        public void UpdateUser(User user)
-        {
-            _context.Users.Update(user);
-            _context.SaveChanges();
-        }
-
-        public void DeleteUser(int id)
-        {
-            var user = GetUserById(id);
-            if (user != null)
-            {
-                _context.Users.Remove(user);
-                _context.SaveChanges();
-            }
+            return await _context.Users
+                .Include(u => u.Favorites)
+                    .ThenInclude(f => f.Tale)
+                .FirstOrDefaultAsync(u => u.Id == id && u.IsActive);
         }
     }
 }

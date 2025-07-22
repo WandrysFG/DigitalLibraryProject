@@ -1,64 +1,34 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using StellarBooks.Domain.Entities;
 using StellarBooks.Infrastructure.Data;
+using StellarBooks.Infrastructure.Data.Repositories;
 
 namespace StellarBooks.Infrastructure.Repositories
 {
-    public class FavoriteRepository
+    public class FavoriteRepository : GenericRepository<Favorite>
     {
         private readonly StellarBocksApplicationDbContext _context;
 
-        public FavoriteRepository(StellarBocksApplicationDbContext context)
+        public FavoriteRepository(StellarBocksApplicationDbContext context) : base(context)
         {
             _context = context;
         }
 
-        public List<Favorite> GetAllFavorites()
+        public async Task<List<Favorite>> GetAllWithUserAndTale()
         {
-            //return _context.Favorites.ToList();
-            return _context.Favorites
-            .Include(f => f.User)
-            .Include(f => f.Tale)
-            .ToList();
+            return await _context.Favorites
+                .Include(f => f.User)
+                .Include(f => f.Tale)
+                .ToListAsync();
         }
 
-        public Favorite GetFavoriteById(int id)
+        public async Task<Favorite> GetByIdWithUserAndTale(int id)
         {
-            //return _context.Favorites.FirstOrDefault(f => f.Id == id);
-            return _context.Favorites
-            .Include(f => f.User)
-            .Include(f => f.Tale)
-            .FirstOrDefault(f => f.Id == id);
+            return await _context.Favorites
+                .Include(f => f.User)
+                .Include(f => f.Tale)
+                .FirstOrDefaultAsync(f => f.Id == id);
         }
 
-        public List<Favorite> GetFavoritesByUserId(int userId)
-        {
-            return _context.Favorites
-                .Where(f => f.UserId == userId)
-                .ToList();
-        }
-
-        public int AddFavorite(Favorite favorite)
-        {
-            _context.Favorites.Add(favorite);
-            _context.SaveChanges();
-            return favorite.Id;
-        }
-
-        public void UpdateFavorite(Favorite favorite)
-        {
-            _context.Favorites.Update(favorite);
-            _context.SaveChanges();
-        }
-
-        public void DeleteFavorite(int id)
-        {
-            var favorite = GetFavoriteById(id);
-            if (favorite != null)
-            {
-                _context.Favorites.Remove(favorite);
-                _context.SaveChanges();
-            }
-        }
     }
 }

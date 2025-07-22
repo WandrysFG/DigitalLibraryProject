@@ -20,5 +20,7 @@ namespace StellarBooks.DTOs
         public string UserType { get; set; } = "Reader";
 
         public bool IsActive { get; set; } = true;
+
+        public DateTime RegistrationDate { get; set; }
     }
 }

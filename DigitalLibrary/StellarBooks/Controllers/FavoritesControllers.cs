@@ -3,6 +3,7 @@ using StellarBooks.DTOs;
 using StellarBooks.Domain.Entities;
 using StellarBooks.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
+using StellarBooks.Infrastructure.Interface;
 
 namespace StellarBooks.Controllers
 {
@@ -10,17 +11,17 @@ namespace StellarBooks.Controllers
     [Route("api/[controller]")]
     public class FavoritesController : ControllerBase
     {
-        private readonly FavoriteRepository _favoriteRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public FavoritesController(FavoriteRepository favoriteRepository)
+        public FavoritesController(IUnitOfWork unitOfWork)
         {
-            _favoriteRepository = favoriteRepository;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetFavorites()
         {
-            var favorites = await _favoriteRepository.GetAllWithUserAndTale();
+            var favorites = await _unitOfWork.Favorites.GetAllWithUserAndTale();
                 var result = favorites.Select(f => new
                 {
                 f.Id,
@@ -44,7 +45,7 @@ namespace StellarBooks.Controllers
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetFavoriteById(int id)
         {
-            var favorite = await _favoriteRepository.GetByIdWithUserAndTale(id);
+            var favorite = await _unitOfWork.Favorites.GetByIdWithUserAndTale(id);
             if (favorite == null)
                 return NotFound($"Favorite with ID {id} not found.");
 
@@ -81,7 +82,8 @@ namespace StellarBooks.Controllers
                 DateAdded = DateTime.UtcNow.Date
             };
 
-            await _favoriteRepository.AddAsync(favorite);
+            await _unitOfWork.Favorites.AddAsync(favorite);
+            await _unitOfWork.CompleteAsync();
 
             return Ok(new { id = favorite.Id });
         }
@@ -89,7 +91,7 @@ namespace StellarBooks.Controllers
         [HttpPut("{id:int}")]
         public async Task<IActionResult> UpdateFavorite(int id, [FromBody] UpdateFavoriteDto dto)
         {
-            var favorite = await _favoriteRepository.GetByIdAsync(id);
+            var favorite = await _unitOfWork.Favorites.GetByIdAsync(id);
             if (favorite == null)
                 return NotFound($"Favorite with ID {id} not found.");
 
@@ -97,7 +99,8 @@ namespace StellarBooks.Controllers
             favorite.TaleId = dto.TaleId;
             favorite.DateAdded = dto.DateAdded;
 
-            await _favoriteRepository.UpdateAsync(favorite);
+            await _unitOfWork.Favorites.UpdateAsync(favorite);
+            await _unitOfWork.CompleteAsync();
 
             return NoContent();
         }
@@ -105,11 +108,12 @@ namespace StellarBooks.Controllers
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteFavorite(int id)
         {
-            var favorite = await _favoriteRepository.GetByIdAsync(id);
+            var favorite = await _unitOfWork.Favorites.GetByIdAsync(id);
             if (favorite == null)
                 return NotFound($"Favorite with ID {id} not found.");
 
-            _favoriteRepository.DeleteAsync(favorite);
+            _unitOfWork.Favorites.DeleteAsync(favorite);
+            await _unitOfWork.CompleteAsync();
 
             return NoContent();
         }

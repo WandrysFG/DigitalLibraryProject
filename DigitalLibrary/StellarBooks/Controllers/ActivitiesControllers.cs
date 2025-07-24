@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using StellarBooks.DTOs;
 using StellarBooks.Domain.Entities;
+using StellarBooks.DTOs;
+using StellarBooks.Infrastructure.Interface;
 using StellarBooks.Infrastructure.Repositories;
 
 namespace StellarBooks.Controllers
@@ -9,17 +10,17 @@ namespace StellarBooks.Controllers
     [Route("api/[controller]")]
     public class ActivitiesController : ControllerBase
     {
-        private readonly ActivityRepository _activityRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ActivitiesController(ActivityRepository activityRepository)
+        public ActivitiesController(IUnitOfWork unitOfWork)
         {
-            _activityRepository = activityRepository;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetActivities()
         {
-            var activities = await _activityRepository.GetAllAsync();
+            var activities = await _unitOfWork.Activities.GetAllAsync();
 
             var result = activities.Select(a => new
             {
@@ -42,7 +43,7 @@ namespace StellarBooks.Controllers
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetActivityById(int id)
         {
-            var activity = await _activityRepository.GetByIdAsync(id);
+            var activity = await _unitOfWork.Activities.GetByIdAsync(id);
 
             if (activity == null)
                 return NotFound($"Activity with ID {id} not found.");
@@ -79,7 +80,8 @@ namespace StellarBooks.Controllers
                 MultimediaResource = dto.MultimediaResource
             };
 
-            var id = await _activityRepository.AddAsync(activity);
+            var id = await _unitOfWork.Activities.AddAsync(activity);
+            await _unitOfWork.CompleteAsync();
 
             return Ok(new { id });
         }
@@ -87,7 +89,7 @@ namespace StellarBooks.Controllers
         [HttpPut("{id:int}")]
         public async Task<IActionResult> UpdateActivity(int id, [FromBody] UpdateActivityDto dto)
         {
-            var existing = await _activityRepository.GetByIdAsync(id);
+            var existing = await _unitOfWork.Activities.GetByIdAsync(id);
             if (existing == null)
                 return NotFound($"Activity with ID {id} not found.");
 
@@ -96,18 +98,21 @@ namespace StellarBooks.Controllers
             existing.Description = dto.Description;
             existing.MultimediaResource = dto.MultimediaResource;
 
-            await _activityRepository.UpdateAsync(existing);
+            await _unitOfWork.Activities.UpdateAsync(existing);
+            await _unitOfWork.CompleteAsync();
+
             return NoContent();
         }
 
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteActivity(int id)
         {
-            var activity = await _activityRepository.GetByIdAsync(id);
+            var activity = await _unitOfWork.Activities.GetByIdAsync(id);
             if (activity == null)
                 return NotFound($"Activity with ID {id} not found.");
 
-            await _activityRepository.DeleteAsync(activity);
+            await _unitOfWork.Activities.DeleteAsync(activity);
+            await _unitOfWork.CompleteAsync();
             return NoContent();
         }
     }

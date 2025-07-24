@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
-using StellarBooks.Infrastructure.Data;
-using StellarBooks.Infrastructure.Data.Repositories;
+using StellarBooks.Infrastructure;
+using StellarBooks.Infrastructure.Interface;
 using StellarBooks.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,10 +10,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<StellarBocksApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddScoped<UserRepository>();
-builder.Services.AddScoped<TaleRepository>();
-builder.Services.AddScoped<FavoriteRepository>();
-builder.Services.AddScoped<ActivityRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ITaleRepository, TaleRepository>();
+builder.Services.AddScoped<IFavoriteRepository, FavoriteRepository>();
+builder.Services.AddScoped<IActivityRepository, ActivityRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddControllers().AddJsonOptions(options=>
     {

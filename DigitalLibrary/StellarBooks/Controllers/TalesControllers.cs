@@ -2,6 +2,7 @@
 using StellarBooks.DTOs;
 using StellarBooks.Domain.Entities;
 using StellarBooks.Infrastructure.Repositories;
+using StellarBooks.Infrastructure.Interface;
 
 namespace StellarBooks.Controllers
 {
@@ -9,17 +10,17 @@ namespace StellarBooks.Controllers
     [Route("api/[controller]")]
     public class TalesController : ControllerBase
     {
-        private readonly TaleRepository _taleRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public TalesController(TaleRepository taleRepository)
+        public TalesController(IUnitOfWork unitOfWork)
         {
-            _taleRepository = taleRepository;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetTales()
         {
-            var tales = await _taleRepository.GetAllAsync();
+            var tales = await _unitOfWork.Tales.GetAllAsync();
                 var result = tales.Select(t => new
                 {
                     t.Id,
@@ -39,7 +40,7 @@ namespace StellarBooks.Controllers
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetTaleById(int id)
         {
-            var tale = await _taleRepository.GetByIdAsync(id);
+            var tale = await _unitOfWork.Tales.GetByIdAsync(id);
             if (tale == null)
                 return NotFound($"Tale with ID {id} not found.");
 
@@ -77,7 +78,8 @@ namespace StellarBooks.Controllers
                 PublicationDate = System.DateTime.UtcNow.Date
             };
 
-            await _taleRepository.AddAsync(tale);
+            await _unitOfWork.Tales.AddAsync(tale);
+            await _unitOfWork.CompleteAsync();
 
             return Ok(new { id = tale.Id });
         }
@@ -88,7 +90,7 @@ namespace StellarBooks.Controllers
             if (request == null)
                 return BadRequest("Tale is null or ID mismatch.");
 
-            var existingTale = await _taleRepository.GetByIdAsync(id);
+            var existingTale = await _unitOfWork.Tales.GetByIdAsync(id);
             if (existingTale == null)
                 return NotFound($"Tale with ID {id} not found.");
 
@@ -101,7 +103,8 @@ namespace StellarBooks.Controllers
             existingTale.IsAvailable = request.IsAvailable;
             existingTale.PublicationDate = request.PublicationDate;
 
-            await _taleRepository.UpdateAsync(existingTale);
+            await _unitOfWork.Tales.UpdateAsync(existingTale);
+            await _unitOfWork.CompleteAsync();
 
             return NoContent();
         }
@@ -109,11 +112,12 @@ namespace StellarBooks.Controllers
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteTale(int id)
         {
-            var tale = await _taleRepository.GetByIdAsync(id);
+            var tale = await _unitOfWork.Tales.GetByIdAsync(id);
             if (tale == null)
                 return NotFound($"Tale with ID {id} not found.");
 
-            await _taleRepository.DeleteAsync(tale);
+            await _unitOfWork.Tales.DeleteAsync(tale);
+            await _unitOfWork.CompleteAsync();
 
             return NoContent();
         }

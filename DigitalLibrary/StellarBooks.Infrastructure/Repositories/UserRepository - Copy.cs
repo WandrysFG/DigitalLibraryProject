@@ -1,15 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using StellarBooks.Domain.Entities;
-using StellarBooks.Infrastructure.Data;
-using StellarBooks.Infrastructure.Data.Repositories;
+using StellarBooks.Infrastructure.Interface;
 
 namespace StellarBooks.Infrastructure.Repositories
 {
-    public class UserRepository : GenericRepository<User>
+    public class UserForzandoTheMingoRepository : GenericRepository<User>, IUserRepository
     {
         private readonly StellarBocksApplicationDbContext _context;
 
-        public UserRepository(StellarBocksApplicationDbContext context) : base(context)
+        public UserForzandoTheMingoRepository(StellarBocksApplicationDbContext context) : base(context)
         {
             _context = context;
         }
@@ -25,6 +24,7 @@ namespace StellarBooks.Infrastructure.Repositories
 
         public async Task<User?> GetUserWithFavoritesAndTalesById(int id)
         {
+            Console.WriteLine($"Fetching users for favorite ID: {id}");
             return await _context.Users
                 .Include(u => u.Favorites)
                     .ThenInclude(f => f.Tale)

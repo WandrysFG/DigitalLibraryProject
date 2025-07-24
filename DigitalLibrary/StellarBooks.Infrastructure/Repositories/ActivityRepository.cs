@@ -1,10 +1,9 @@
 ﻿using StellarBooks.Domain.Entities;
-using StellarBooks.Infrastructure.Data;
-using StellarBooks.Infrastructure.Data.Repositories;
+using StellarBooks.Infrastructure.Interface;
 
 namespace StellarBooks.Infrastructure.Repositories
 {
-    public class ActivityRepository : GenericRepository<Activity>
+    public class ActivityRepository : GenericRepository<Activity>, IActivityRepository
     {
         private readonly StellarBocksApplicationDbContext _context;
 

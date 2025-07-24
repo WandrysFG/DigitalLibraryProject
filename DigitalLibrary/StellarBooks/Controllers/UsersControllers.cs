@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StellarBooks.DTOs;
 using StellarBooks.Domain.Entities;
-using StellarBooks.Infrastructure.Data;
 using StellarBooks.Infrastructure.Repositories;
+using StellarBooks.Infrastructure.Interface;
 
 namespace StellarBooks.Controllers
 {
@@ -10,17 +10,17 @@ namespace StellarBooks.Controllers
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
-        private readonly UserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public UsersController(UserRepository userRepository)
+        public UsersController(IUnitOfWork unitOfWork)
         {
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetUsers()
         {
-            var users = await _userRepository.GetAllUsersWithFavoritesAndTales();
+            var users = await _unitOfWork.Users.GetAllUsersWithFavoritesAndTales();
 
             var usersWithFavorites = users.Select(u => new
             {
@@ -45,7 +45,7 @@ namespace StellarBooks.Controllers
         [Route("{id:int}")]
         public async Task<IActionResult> GetUserById(int id)
         {
-            var user = await _userRepository.GetUserWithFavoritesAndTalesById(id);
+            var user = await _unitOfWork.Users.GetUserWithFavoritesAndTalesById(id);
             if (user == null)
                 return NotFound($"User with ID {id} not found.");
 
@@ -85,7 +85,8 @@ namespace StellarBooks.Controllers
                 RegistrationDate = System.DateTime.UtcNow.Date
             };
 
-            user = await _userRepository.AddAsync(user);
+            user = await _unitOfWork.Users.AddAsync(user);
+            await _unitOfWork.CompleteAsync();
 
             return Ok(new { id = user.Id });
         }
@@ -96,7 +97,7 @@ namespace StellarBooks.Controllers
             if (request == null)
                 return BadRequest("User is null or ID mismatch.");
 
-            var existingUser = await _userRepository.GetByIdAsync(request.Id);
+            var existingUser = await _unitOfWork.Users.GetByIdAsync(request.Id);
             if (existingUser == null)
                 return NotFound($"User with ID {id} not found.");
 
@@ -108,20 +109,24 @@ namespace StellarBooks.Controllers
             existingUser.IsActive = request.IsActive;
             existingUser.RegistrationDate = request.RegistrationDate;
 
-            await _userRepository.UpdateAsync(existingUser);
+            await _unitOfWork.Users.UpdateAsync(existingUser);
+            await _unitOfWork.CompleteAsync();
+
             return NoContent();
         }
 
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
-            var user = await _userRepository.GetByIdAsync(id);
+            var user = await _unitOfWork.Users.GetByIdAsync(id);
             if (user == null)
             {
                 return NotFound($"User with ID {id} not found.");
             }
             
-            await _userRepository.DeleteAsync(user);
+            await _unitOfWork.Users.DeleteAsync(user);
+            await _unitOfWork.CompleteAsync();
+
             return NoContent();
         }
     }

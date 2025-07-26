@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace StellarBooks.DTOs
+namespace StellarBooks.Applications.DTOs
 {
     public class CreateTaleDto
     {

@@ -23,5 +23,7 @@ namespace StellarBooks.Domain.Entities
 
         [StringLength(255)]
         public string MultimediaResource { get; set; }
+
+        //public List<Tale> Tales { get; set; }
     }
 }

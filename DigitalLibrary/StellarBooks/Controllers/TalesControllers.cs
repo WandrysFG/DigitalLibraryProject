@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using StellarBooks.DTOs;
 using StellarBooks.Domain.Entities;
 using StellarBooks.Infrastructure.Repositories;
 using StellarBooks.Infrastructure.Interface;
+using StellarBooks.Applications.DTOs;
+using StellarBooks.Application.Interfaces;
+using StellarBooks.Application.Services;
 
 namespace StellarBooks.Controllers
 {
@@ -10,115 +12,43 @@ namespace StellarBooks.Controllers
     [Route("api/[controller]")]
     public class TalesController : ControllerBase
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly ITaleService _taleService;
 
-        public TalesController(IUnitOfWork unitOfWork)
+        public TalesController(ITaleService taleService)
         {
-            _unitOfWork = unitOfWork;
+            _taleService = taleService;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetTales()
         {
-            var tales = await _unitOfWork.Tales.GetAllAsync();
-                var result = tales.Select(t => new
-                {
-                    t.Id,
-                    t.Title,
-                    t.RecommendedAge,
-                    t.Theme,
-                    t.Content,
-                    t.CoverImage,
-                    t.NarrationAudio,
-                    t.IsAvailable,
-                    t.PublicationDate
-                }).ToList();
-
-            return Ok(tales);
+            return Ok(await _taleService.GetTales());
         }
 
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetTaleById(int id)
         {
-            var tale = await _unitOfWork.Tales.GetByIdAsync(id);
-            if (tale == null)
-                return NotFound($"Tale with ID {id} not found.");
-
-            var result = new
-            {
-                tale.Id,
-                tale.Title,
-                tale.RecommendedAge,
-                tale.Theme,
-                tale.Content,
-                tale.CoverImage,
-                tale.NarrationAudio,
-                tale.IsAvailable,
-                tale.PublicationDate
-            };
-
-            return Ok(result);
+            return Ok(await _taleService.GetTaleById(id));
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateTale([FromBody] CreateTaleDto request)
         {
-            if (request == null)
-                return BadRequest("Tale cannot be null.");
-
-            var tale = new Tale
-            {
-                Title = request.Title,
-                RecommendedAge = request.RecommendedAge,
-                Theme = request.Theme,
-                Content = request.Content,
-                CoverImage = request.CoverImage,
-                NarrationAudio = request.NarrationAudio,
-                IsAvailable = request.IsAvailable,
-                PublicationDate = System.DateTime.UtcNow.Date
-            };
-
-            await _unitOfWork.Tales.AddAsync(tale);
-            await _unitOfWork.CompleteAsync();
-
-            return Ok(new { id = tale.Id });
+            var responseId = await _taleService.CreateTale(request);
+            return Ok(new { id = responseId });
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> UpdateTale(int id, [FromBody] Tale request)
+        public async Task<IActionResult> UpdateTale(int id, [FromBody] UpdateTaleDto request)
         {
-            if (request == null)
-                return BadRequest("Tale is null or ID mismatch.");
-
-            var existingTale = await _unitOfWork.Tales.GetByIdAsync(id);
-            if (existingTale == null)
-                return NotFound($"Tale with ID {id} not found.");
-
-            existingTale.Title = request.Title;
-            existingTale.RecommendedAge = request.RecommendedAge;
-            existingTale.Theme = request.Theme;
-            existingTale.Content = request.Content;
-            existingTale.CoverImage = request.CoverImage;
-            existingTale.NarrationAudio = request.NarrationAudio;
-            existingTale.IsAvailable = request.IsAvailable;
-            existingTale.PublicationDate = request.PublicationDate;
-
-            await _unitOfWork.Tales.UpdateAsync(existingTale);
-            await _unitOfWork.CompleteAsync();
-
+            await _taleService.UpdateTale(id, request);
             return NoContent();
         }
 
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteTale(int id)
         {
-            var tale = await _unitOfWork.Tales.GetByIdAsync(id);
-            if (tale == null)
-                return NotFound($"Tale with ID {id} not found.");
-
-            await _unitOfWork.Tales.DeleteAsync(tale);
-            await _unitOfWork.CompleteAsync();
-
+            await _taleService.DeleteTale(id);
             return NoContent();
         }
     }

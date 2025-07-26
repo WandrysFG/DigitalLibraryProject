@@ -13,21 +13,19 @@ namespace StellarBooks.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<List<User>> GetAllUsersWithFavoritesAndTales()
+        public async Task<List<User>> GetAllUsersWithFavorites()
         {
             return await _context.Users
                 .Where(u => u.IsActive)
                 .Include(u => u.Favorites)
-                    .ThenInclude(f => f.Tale)
                 .ToListAsync();
         }
 
-        public async Task<User?> GetUserWithFavoritesAndTalesById(int id)
+        public async Task<User?> GetUserWithFavoritesById(int id)
         {
             Console.WriteLine($"Fetching users for favorite ID: {id}");
             return await _context.Users
                 .Include(u => u.Favorites)
-                    .ThenInclude(f => f.Tale)
                 .FirstOrDefaultAsync(u => u.Id == id && u.IsActive);
         }
     }

@@ -4,7 +4,7 @@ namespace StellarBooks.Infrastructure.Interface
 {
     public interface IUserRepository : IRepository<User>
     {
-        Task<List<User>> GetAllUsersWithFavoritesAndTales();
-        Task<User?> GetUserWithFavoritesAndTalesById(int id);
+        Task<List<User>> GetAllUsersWithFavorites();
+        Task<User?> GetUserWithFavoritesById(int id);
     }
 }

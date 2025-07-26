@@ -1,13 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using StellarBooks.DTOs;
 
-namespace StellarBooks.DTOs
+namespace StellarBooks.Applications.DTOs
 {
     public class UpdateUserDto : CreateUserDto
     {
         public int Id { get; set; }
-        
-        public List<UpdateFavoriteDto> Favorites { get; set; } = new();
     }
 }

@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
-namespace StellarBooks.DTOs
+namespace StellarBooks.Applications.DTOs
 {
-    public class UpdateTaleDto : CreateTaleDto
+    public class UpdateActivityDto : CreateActivityDto
     {
         public int Id { get; set; }
+
+        public UpdateTaleDto? Tale { get; set; }
     }
 }

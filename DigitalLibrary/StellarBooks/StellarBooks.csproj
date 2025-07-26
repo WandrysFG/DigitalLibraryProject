@@ -13,9 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\StellarBooks.Domain\StellarBooks.Domain.csproj" />
-    <ProjectReference Include="..\StellarBooks.Infrastructure\StellarBooks.Infrastructure.csproj" />
-    <ProjectReference Include="StellarBooks.Domain\StellarBooks.Domain.csproj" />
+    <ProjectReference Include="..\StellarBooks.Application\StellarBooks.Application.csproj" />
   </ItemGroup>
 
 </Project>

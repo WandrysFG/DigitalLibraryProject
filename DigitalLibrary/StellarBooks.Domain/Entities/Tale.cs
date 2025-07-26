@@ -1,6 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using System.Globalization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace StellarBooks.Domain.Entities
 {
@@ -32,9 +31,5 @@ namespace StellarBooks.Domain.Entities
 
         [Column(TypeName = "date")]
         public DateTime PublicationDate { get; set; } = DateTime.Today;
-
-        //public virtual ICollection<Activity> Activities { get; set; }
-        //public virtual ICollection<Favorite> Favorites { get; set; }
     }
-
 }

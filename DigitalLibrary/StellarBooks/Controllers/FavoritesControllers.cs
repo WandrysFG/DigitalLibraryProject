@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using StellarBooks.DTOs;
-using StellarBooks.Domain.Entities;
-using StellarBooks.Infrastructure.Repositories;
-using Microsoft.EntityFrameworkCore;
-using StellarBooks.Infrastructure.Interface;
+using StellarBooks.Application.Interfaces;
+using StellarBooks.Applications.DTOs;
 
 namespace StellarBooks.Controllers
 {
@@ -11,110 +8,50 @@ namespace StellarBooks.Controllers
     [Route("api/[controller]")]
     public class FavoritesController : ControllerBase
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IFavoriteService _favoriteService;
 
-        public FavoritesController(IUnitOfWork unitOfWork)
+        public FavoritesController(IFavoriteService favoriteService)
         {
-            _unitOfWork = unitOfWork;
+            _favoriteService = favoriteService;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetFavorites()
         {
-            var favorites = await _unitOfWork.Favorites.GetAllWithUserAndTale();
-                var result = favorites.Select(f => new
-                {
-                f.Id,
-                    f.DateAdded,
-                    User = new
-                    {
-                        f.User.Id,
-                        f.User.FirstName,
-                        f.User.LastName
-                    },
-                    Tale = new
-                    {
-                        f.Tale.Id,
-                        f.Tale.Title,
-                    }
-                }).ToList();
+            return Ok(await _favoriteService.GetFavorites());
+        }
 
-            return Ok(result);
+        [HttpGet]
+        [Route("with-user-tale")]
+        public async Task<IActionResult> GetAllWithUserAndTale()
+        {
+            return Ok(await _favoriteService.GetAllWithUserAndTale());
         }
 
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetFavoriteById(int id)
         {
-            var favorite = await _unitOfWork.Favorites.GetByIdWithUserAndTale(id);
-            if (favorite == null)
-                return NotFound($"Favorite with ID {id} not found.");
-
-            var result = new
-            {
-                favorite.Id,
-                favorite.DateAdded,
-                User = new
-                {
-                    favorite.User.Id,
-                    favorite.User.FirstName,
-                    favorite.User.LastName
-                },
-                Tale = new
-                {
-                    favorite.Tale.Id,
-                    favorite.Tale.Title,
-                }
-            };
-
-            return Ok(result);
+            return Ok(await _favoriteService.GetFavoriteById(id));
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateFavorite([FromBody] CreateFavoriteDto dto)
+        public async Task<IActionResult> CreateFavorite([FromBody] CreateFavoriteDto request)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var favorite = new Favorite
-            {
-                UserId = dto.UserId,
-                TaleId = dto.TaleId,
-                DateAdded = DateTime.UtcNow.Date
-            };
-
-            await _unitOfWork.Favorites.AddAsync(favorite);
-            await _unitOfWork.CompleteAsync();
-
-            return Ok(new { id = favorite.Id });
+            var responseId = await _favoriteService.CreateFavorite(request);
+            return Ok(new { id = responseId });
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> UpdateFavorite(int id, [FromBody] UpdateFavoriteDto dto)
+        public async Task<IActionResult> UpdateFavorite(int id, [FromBody] UpdateFavoriteDto request)
         {
-            var favorite = await _unitOfWork.Favorites.GetByIdAsync(id);
-            if (favorite == null)
-                return NotFound($"Favorite with ID {id} not found.");
-
-            favorite.UserId = dto.UserId;
-            favorite.TaleId = dto.TaleId;
-            favorite.DateAdded = dto.DateAdded;
-
-            await _unitOfWork.Favorites.UpdateAsync(favorite);
-            await _unitOfWork.CompleteAsync();
-
+            await _favoriteService.UpdateFavorite(id, request);
             return NoContent();
         }
 
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteFavorite(int id)
         {
-            var favorite = await _unitOfWork.Favorites.GetByIdAsync(id);
-            if (favorite == null)
-                return NotFound($"Favorite with ID {id} not found.");
-
-            _unitOfWork.Favorites.DeleteAsync(favorite);
-            await _unitOfWork.CompleteAsync();
-
+            await _favoriteService.DeleteFavorite(id);
             return NoContent();
         }
     }

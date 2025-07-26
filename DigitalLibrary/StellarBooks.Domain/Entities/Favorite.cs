@@ -14,20 +14,15 @@ namespace StellarBooks.Domain.Entities
         public int UserId { get; set; }
 
         [ForeignKey("UserId")]
-        public User User { get; set; }
+        public User? User { get; set; }
 
         [Required]
         public int TaleId { get; set; }
 
         [ForeignKey("TaleId")]
-        public Tale Tale { get; set; }
+        public Tale? Tale { get; set; }
 
         [Column(TypeName = "date")]
         public DateTime DateAdded { get; set; } = DateTime.Today;
-
-        //public string username()
-        //{
-        //    return User?.FirstName ?? string.Empty;
-        //}
     }
 }

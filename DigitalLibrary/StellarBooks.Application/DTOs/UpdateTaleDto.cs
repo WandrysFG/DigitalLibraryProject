@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
-namespace StellarBooks.DTOs
+namespace StellarBooks.Applications.DTOs
 {
-    public class UpdateActivityDto : CreateActivityDto
+    public class UpdateTaleDto : CreateTaleDto
     {
         public int Id { get; set; }
     }

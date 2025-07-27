@@ -1,6 +1,0 @@
-@StellarBoocks_HostAddress = http://localhost:5016
-
-GET {{StellarBoocks_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

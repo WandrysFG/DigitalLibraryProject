@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 
 namespace StellarBooks.Applications.DTOs
 {
@@ -23,8 +22,5 @@ namespace StellarBooks.Applications.DTOs
         public bool IsActive { get; set; } = true;
 
         public DateTime RegistrationDate { get; set; }
-
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public List<UpdateFavoriteDto>? Favorites { get; set; }
     }
 }

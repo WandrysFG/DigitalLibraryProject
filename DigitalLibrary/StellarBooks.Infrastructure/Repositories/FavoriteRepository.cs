@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using StellarBooks.Domain.Entities;
+using StellarBooks.Infrastructure.Context;
+using StellarBooks.Infrastructure.Core;
 using StellarBooks.Infrastructure.Interface;
 
 namespace StellarBooks.Infrastructure.Repositories
@@ -28,6 +30,5 @@ namespace StellarBooks.Infrastructure.Repositories
                 .Include(f => f.Tale)
                 .FirstOrDefaultAsync(f => f.Id == id);
         }
-
     }
 }

@@ -1,4 +1,5 @@
-﻿using StellarBooks.Application.Interfaces;
+﻿using AutoMapper;
+using StellarBooks.Application.Interfaces;
 using StellarBooks.Applications.DTOs;
 using StellarBooks.Domain.Entities;
 using StellarBooks.Infrastructure.Interface;
@@ -9,26 +10,21 @@ namespace StellarBooks.Application.Services
     {
 
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public ActivityService(IUnitOfWork unitOfWork)
+        public ActivityService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         public async Task<List<UpdateActivityDto>> GetActivities()
         {
             var activities = await _unitOfWork.Activities.GetAllAsync();
 
-            var result = activities.Select(a => new UpdateActivityDto
-            {
-                Id = a.Id,
-                TaleId = a.TaleId,
-                ActivityType = a.ActivityType,
-                Description = a.Description,
-                MultimediaResource = a.MultimediaResource
-            }).ToList();
+            var activityResponse = _mapper.Map<List<UpdateActivityDto>>(activities);
 
-            return result;
+            return activityResponse;
         }
 
         public async Task<UpdateActivityDto> GetActivityById(int id)
@@ -40,22 +36,9 @@ namespace StellarBooks.Application.Services
                 throw new Exception($"Activity with ID {id} not found.");
             }
 
-            var result = new UpdateActivityDto
-            {
-                Id = activity.Id,
-                TaleId = activity.TaleId,
-                ActivityType = activity.ActivityType,
-                Description = activity.Description,
-                MultimediaResource = activity.MultimediaResource,
-                Tale = activity.Tale == null ? null : new UpdateTaleDto
-                {
-                    Id = activity.Tale.Id,
-                    Title = activity.Tale.Title,
-                    RecommendedAge = activity.Tale.RecommendedAge
-                }
-            };
+            var activityResponse = _mapper.Map<UpdateActivityDto>(activity);
 
-            return result;
+            return activityResponse;
         }
 
         public async Task<int> CreateActivity(CreateActivityDto request)
@@ -65,14 +48,7 @@ namespace StellarBooks.Application.Services
                 throw new Exception("Activity cannot be null.");
             }
 
-            var activity = new Activity
-            {
-                TaleId = request.TaleId,
-                ActivityType = request.ActivityType,
-                Description = request.Description,
-                MultimediaResource = request.MultimediaResource
-            };
-
+            var activity = _mapper.Map<Activity>(request);
             activity = await _unitOfWork.Activities.AddAsync(activity);
             await _unitOfWork.CompleteAsync();
 
@@ -81,18 +57,14 @@ namespace StellarBooks.Application.Services
 
         public async Task UpdateActivity(int id, UpdateActivityDto request)
         {
-            var existing = await _unitOfWork.Activities.GetByIdAsync(id);
-            if (existing == null)
+            var existingActivity = await _unitOfWork.Activities.GetByIdAsync(id);
+            if (existingActivity == null)
             {
                 throw new Exception("Activity with ID {id} not found.");
             }
 
-            existing.TaleId = request.TaleId;
-            existing.ActivityType = request.ActivityType;
-            existing.Description = request.Description;
-            existing.MultimediaResource = request.MultimediaResource;
-
-            await _unitOfWork.Activities.UpdateAsync(existing);
+            _mapper.Map(request, existingActivity);
+            await _unitOfWork.Activities.UpdateAsync(existingActivity);
             await _unitOfWork.CompleteAsync();
         }
 

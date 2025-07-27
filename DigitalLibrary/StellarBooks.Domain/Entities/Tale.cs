@@ -31,5 +31,9 @@ namespace StellarBooks.Domain.Entities
 
         [Column(TypeName = "date")]
         public DateTime PublicationDate { get; set; } = DateTime.Today;
+
+        public virtual ICollection<Activity> Activities { get; set; } = new List<Activity>();
+
+        public virtual ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
     }
 }

@@ -1,10 +1,14 @@
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using StellarBooks.Application.Interfaces;
+using StellarBooks.Application.MapperProfiles;
 using StellarBooks.Application.Services;
-using StellarBooks.Infrastructure;
 using StellarBooks.Infrastructure.Interface;
 using StellarBooks.Infrastructure.Repositories;
+using StellarBooks.Application.MapperProfiles;
+using AutoMapper;
+using StellarBooks.Infrastructure.Context;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +25,8 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IFavoriteService, FavoriteService>();
 builder.Services.AddScoped<IActivityService, ActivityService>();
 builder.Services.AddScoped<ITaleService, TaleService>();
+
+builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
 builder.Services.AddControllers().AddJsonOptions(options=>
     {

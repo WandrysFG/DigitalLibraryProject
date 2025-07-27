@@ -1,10 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using StellarBooks.Domain.Entities;
-using StellarBooks.Infrastructure.Repositories;
-using StellarBooks.Infrastructure.Interface;
-using StellarBooks.Applications.DTOs;
 using StellarBooks.Application.Interfaces;
-using StellarBooks.Application.Services;
+using StellarBooks.Applications.DTOs;
 
 namespace StellarBooks.Controllers
 {
@@ -24,6 +20,14 @@ namespace StellarBooks.Controllers
         {
             return Ok(await _taleService.GetTales());
         }
+
+
+        [HttpGet("{id}/with-relations")]
+        public async Task<IActionResult> GetTaleWithRelations(int id)
+        {
+            return Ok(await _taleService.GetTaleByIdWithRelations(id));
+        }
+
 
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetTaleById(int id)

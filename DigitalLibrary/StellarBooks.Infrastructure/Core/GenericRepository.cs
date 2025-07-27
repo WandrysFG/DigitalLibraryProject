@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using StellarBooks.Infrastructure.Context;
 using StellarBooks.Infrastructure.Interface;
 
-namespace StellarBooks.Infrastructure.Repositories
+namespace StellarBooks.Infrastructure.Core
 {
     public class GenericRepository<T> : IRepository<T> where T : class
     {

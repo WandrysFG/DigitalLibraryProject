@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-
-namespace StellarBooks.Applications.DTOs
+﻿namespace StellarBooks.Applications.DTOs
 {
     public class UpdateActivityDto : CreateActivityDto
     {

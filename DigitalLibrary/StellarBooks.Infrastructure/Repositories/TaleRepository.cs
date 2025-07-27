@@ -1,4 +1,7 @@
-﻿using StellarBooks.Domain.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using StellarBooks.Domain.Entities;
+using StellarBooks.Infrastructure.Context;
+using StellarBooks.Infrastructure.Core;
 using StellarBooks.Infrastructure.Interface;
 
 namespace StellarBooks.Infrastructure.Repositories
@@ -17,6 +20,14 @@ namespace StellarBooks.Infrastructure.Repositories
             return _context.Tales
                 .Where(t => t.Title.Contains(title, StringComparison.OrdinalIgnoreCase))
                 .ToList();
+        }
+
+        public async Task<Tale> GetTaleWithRelations(int id)
+        {
+            return await _context.Tales
+                .Include(t => t.Activities)
+                .Include(t => t.Favorites)
+                .FirstOrDefaultAsync(t => t.Id == id);
         }
     }
 }

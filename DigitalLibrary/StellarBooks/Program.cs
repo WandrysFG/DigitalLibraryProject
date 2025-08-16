@@ -1,16 +1,21 @@
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using StellarBooks.Application.Interfaces;
 using StellarBooks.Application.MapperProfiles;
 using StellarBooks.Application.Services;
+using StellarBooks.Infrastructure.Context;
 using StellarBooks.Infrastructure.Interface;
 using StellarBooks.Infrastructure.Repositories;
-using StellarBooks.Application.MapperProfiles;
-using AutoMapper;
-using StellarBooks.Infrastructure.Context;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins",
+        builder => builder.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader());
+});
 
 // Add services to the container.
 builder.Services.AddDbContext<StellarBocksApplicationDbContext>(options =>
@@ -28,7 +33,7 @@ builder.Services.AddScoped<ITaleService, TaleService>();
 
 builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
-builder.Services.AddControllers().AddJsonOptions(options=>
+builder.Services.AddControllers().AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
         options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
@@ -48,6 +53,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowAllOrigins");
 
 app.UseAuthorization();
 

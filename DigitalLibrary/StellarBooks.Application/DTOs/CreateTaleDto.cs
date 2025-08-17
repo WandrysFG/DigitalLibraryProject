@@ -20,7 +20,7 @@ namespace StellarBooks.Applications.DTOs
         public string CoverImage { get; set; }
 
         [StringLength(255)]
-        public string NarrationAudio { get; set; }
+        public string? NarrationAudio { get; set; }
 
         public bool IsAvailable { get; set; } = true;
 

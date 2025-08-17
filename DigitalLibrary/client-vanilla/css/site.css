@@ -8,7 +8,7 @@
     --light-bg: #ffffff;
     --dark-bg: #343a40;
     --gradient-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow: 0 4px 6px #00000029;
     --border-radius: 8px;
 }
 

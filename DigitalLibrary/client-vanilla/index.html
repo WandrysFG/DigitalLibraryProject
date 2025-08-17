@@ -13,6 +13,7 @@
         
         <!-- Custom CSS -->
         <link rel="stylesheet" href="css/site.css">
+        <link rel="stylesheet" href="css/home.css">
     </head>
     <body>
         <!-- Header -->
@@ -26,7 +27,17 @@
                         <p class="lead mb-0">Biblioteca de Cuentos Infantiles</p>
                     </div>
                     <div class="col-md-4 text-end">
-                        <span id="currentDate" class="text-white-50"></span>
+                        <div class="mb-2">
+                            <span id="currentDate" class="text-white-50 d-block"></span>
+                        </div>
+                        <div class="d-flex gap-2 justify-content-end">
+                            <button id="homeBtn" class="btn-nav-home">
+                                <i class="bi bi-house-door"></i> Inicio
+                            </button>
+                            <button id="indexBtn" class="btn-nav-admin">
+                                <i class="bi bi-gear"></i> Administrar
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

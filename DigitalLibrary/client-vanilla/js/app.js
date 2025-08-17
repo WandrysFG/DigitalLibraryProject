@@ -34,6 +34,20 @@ document.addEventListener("DOMContentLoaded", () => {
             .replaceAll("'", "&#039;");
     };
 
+    const homeBtn = document.getElementById("homeBtn");
+    if (homeBtn) {
+        homeBtn.addEventListener("click", () => {
+            window.location.href = "home.html";
+        });
+    }
+
+    const indexBtn = document.getElementById("indexBtn");
+    if (indexBtn) {
+        indexBtn.addEventListener("click", () => {
+            window.location.href = "index.html";
+        });
+    }
+
     // ---------- FUNCIONES DE CUENTOS ----------
 
     const clearTaleForm = () => {

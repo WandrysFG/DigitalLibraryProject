@@ -5,7 +5,7 @@ Incluye funcionalidades para gestión de usuarios, cuentos, favoritos y activida
 
 ---
 
-## 🚀 Funcionalidades principales
+## Funcionalidades principales
 
 ### Gestión de Usuarios
 - Registro de usuarios (niños, padres y docentes).  
@@ -29,7 +29,7 @@ Incluye funcionalidades para gestión de usuarios, cuentos, favoritos y activida
 
 ---
 
-## 🛠️ Tecnologías utilizadas
+## 🛠Tecnologías utilizadas
 - **Backend:** ASP.NET Core con Entity Framework Core.  
 - **Base de datos:** SQL Server.  
 - **Frontend (presentación):** HTML, Bootstrap y Vanilla JS.  

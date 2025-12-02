@@ -22,6 +22,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
+            const MAX_EMAIL_LENGTH = 50;
+            if (email.length > MAX_EMAIL_LENGTH) {
+                Swal.fire("Error", `El correo no puede superar ${MAX_EMAIL_LENGTH} caracteres`, "error");
+                return;
+            }
+
             try {
                 const users = await fetchJson(`${apiBaseUrl}/users`);
                 if (!users || users.length === 0) {
@@ -50,7 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 Swal.fire({
                     icon: "success",
-                    title: `Bienvenido, ${user.firstName}`,
+                    title: `Bienvenido/a, ${user.firstName}`,
                     showConfirmButton: false,
                     timer: 1500,
                     didOpen: () => {
@@ -59,11 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
 
                 setTimeout(() => {
-                    if (user.userType === "Admin") {
-                        window.location.href = "index.html";
-                    } else {
-                        window.location.href = "home.html";
-                    }
+                    window.location.href = "home.html";
                 }, 1500);
 
             } catch (error) {

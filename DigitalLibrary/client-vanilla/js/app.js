@@ -991,6 +991,15 @@ document.addEventListener("DOMContentLoaded", () => {
             const userIdNum = id ? parseInt(id, 10) : null;
             const password = document.getElementById("userPassword").value.trim();
 
+            const inputs = userForm.querySelectorAll("input[type='text'], input[type='email'], input[type='password']");
+
+            const tooLong = Array.from(inputs).some(input => input.value.length > parseInt(input.getAttribute("maxlength") || "0"));
+
+            if (tooLong) {
+                showAlert("Error", "Algunos campos exceden la longitud máxima permitida.", "error");
+                return;
+            }
+
             const userData = {
                 firstName: document.getElementById("userFirstName").value.trim(),
                 lastName: document.getElementById("userLastName").value.trim(),

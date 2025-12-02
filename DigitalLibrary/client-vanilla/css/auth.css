@@ -1,0 +1,98 @@
+:root {
+    --primary-color: #7d4ae2;
+    --primary-dark: #357abd;
+    --gradient-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --border-radius: 12px;
+}
+
+/* Body y fondo */
+body {
+    background: linear-gradient(135deg, #121212 0%, #1a1a1a 100%);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Contenedor de formulario */
+
+.card {
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: 2.5rem 2rem;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    animation: fadeInUp 0.6s ease-out forwards;
+    background: #fff;
+}
+
+/* Títulos */
+.card h3 {
+    color: var(--primary-color);
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+
+/* Inputs */
+.form-control {
+    border-radius: var(--border-radius);
+    border: 2px solid #e9ecef;
+    padding: 0.6rem 1rem;
+    margin-bottom: 1rem;
+    transition: all 0.3s;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(74,144,226,0.25);
+}
+
+/* Botones */
+.btn-success, .btn-primary {
+    width: 100%;
+    padding: 0.6rem 1rem;
+    font-weight: 600;
+    color: #fff;
+    border-radius: var(--border-radius);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+    background: var(--gradient-bg);
+}
+
+.btn-primary:hover, .btn-success:hover {
+    background: linear-gradient(135deg, #764ba2, #667eea);
+    transform: translateY(-5px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+}
+
+/* Enlaces de registro/login */
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+a:hover {
+    color: var(--primary-dark);
+    text-decoration: underline;
+}
+
+/* Mensajes de alerta */
+.auth-alert {
+    margin-bottom: 1rem;
+    color: #dc3545;
+    font-size: 0.85rem;
+}
+
+/* Animaciones */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px);}
+    to { opacity: 1; transform: translateY(0);}
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .card {
+        padding: 2rem 1.5rem;
+    }
+}

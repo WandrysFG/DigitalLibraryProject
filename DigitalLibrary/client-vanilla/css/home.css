@@ -19,14 +19,14 @@
 
 /* Botones de navegación */
 .btn-nav-home,
-.btn-nav-admin {
+.btn-nav-admin, .btn-danger {
     background: rgba(255,255,255,0.92);
     color: #7d4ae2;
     border: none;
     border-radius: 20px;
     padding: 0.3rem 1rem;
     font-weight: 600;
-    font-size: 0.98rem;
+    font-size: 0.8rem;
     box-shadow: 0 2px 8px rgba(74, 144, 226, 0.10);
     transition: all 0.2s cubic-bezier(.4,2,.3,1);
     letter-spacing: 0.2px;
@@ -38,7 +38,7 @@
 }
 
 .btn-nav-home:hover,
-.btn-nav-admin:hover {
+.btn-nav-admin:hover, .btn-danger:hover {
     background: var(--primary-color);
     color: #fff;
     transform: translateY(-1px) scale(1.03);
@@ -47,7 +47,7 @@
 }
 
 .btn-nav-home i,
-.btn-nav-admin i {
+.btn-nav-admin i, .btn-danger i {
     font-size: 1.1rem;
     vertical-align: middle;
 }

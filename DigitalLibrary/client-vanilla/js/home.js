@@ -7,6 +7,26 @@ document.addEventListener("DOMContentLoaded", () => {
     let allUsers = [];
     let currentUser = null;
 
+    // ---------- Proteccion de paginas ----------
+    const indexBtn = document.getElementById("indexBtn");
+    if (indexBtn) {
+        indexBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+
+            if (!currentUser) {
+                window.location.href = "login.html";
+                return;
+            }
+
+            if (currentUser.userType !== "Admin") {
+                Swal.fire("Acceso denegado", "No tienes permisos para esta página", "warning");
+                return;
+            }
+
+            window.location.href = "index.html";
+        });
+    }
+
     // ---------- FECHA ACTUAL ----------
     document.getElementById("currentDate").textContent = new Date().toLocaleDateString("es-ES", {
         weekday: "long", year: "numeric", month: "long", day: "numeric"
@@ -14,18 +34,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const homeBtn = document.getElementById("homeBtn");
     if (homeBtn) {
-        homeBtn.addEventListener("click", () => {
-            window.location.href = "home.html";
-        });
+        homeBtn.addEventListener("click", () => window.location.href = "home.html");
+        homeBtn.classList.remove("btn-outline-light");
+        homeBtn.classList.add("btn-light");
     }
-
-    const indexBtn = document.getElementById("indexBtn");
-    if (indexBtn) {
-        indexBtn.addEventListener("click", () => {
-            window.location.href = "index.html";
-        });
-    }
-
+ 
     // ---------- HELPERS ----------
     const fetchJson = async (url, options = {}) => {
         try {
@@ -508,10 +521,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const loadUsers = async () => {
         try {
-            allUsers = await fetchJson(`${apiBaseUrl}/users`);
-            currentUser = allUsers.find(u => u.isActive && u.userType === 'Reader') || null;
+            const storedUser = localStorage.getItem("stellarbooks_user");
+            currentUser = storedUser ? JSON.parse(storedUser) : null;
         } catch (error) {
-            console.error("Error al cargar usuarios:", error);
+            console.error("Error al cargar usuario desde localStorage:", error);
         }
     };
 

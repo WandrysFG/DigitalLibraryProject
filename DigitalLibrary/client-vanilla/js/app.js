@@ -9,6 +9,20 @@ document.addEventListener("DOMContentLoaded", () => {
     let allFavorites = [];
     let filteredFavorites = [];
 
+    // ---------- Proteccion de paginas ----------
+    const userJson = localStorage.getItem("stellarbooks_user");
+    
+    if (!userJson) {
+        window.location.href = "login.html";
+    } else {
+        const currentUser = JSON.parse(userJson);
+        if (window.location.pathname.includes("index.html") && currentUser.userType !== "Admin") {
+            Swal.fire("Acceso denegado", "No tienes permisos para esta página", "warning").then(() => {
+                window.location.href = "home.html";
+            });
+        }
+    }
+
     // ---------- FECHA ACTUAL ----------
     document.getElementById("currentDate").textContent = new Date().toLocaleDateString("es-ES", {
         weekday: "long", year: "numeric", month: "long", day: "numeric"
@@ -23,6 +37,20 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     const showAlert = (title, text, icon = "info") => Swal.fire({ title, text, icon });
+
+    const confirmDelete = async (itemName = "este elemento") => {
+        const result = await Swal.fire({
+            title: `¿Estás seguro de eliminar ${itemName}?`,
+            text: "¡No podrás deshacer esta acción!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#198754',
+            cancelButtonColor: '#b72323ff',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        });
+        return result.isConfirmed;
+    };
 
     const escapeHtml = (str) => {
         if (str == null) return "";
@@ -260,7 +288,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const deleteTale = async (id) => {
-        if (!confirm("¿Estás seguro de eliminar este cuento?")) return;
+        if (!(await confirmDelete("el cuento"))) return;
         try {
             await fetchJson(`${apiBaseUrl}/tales/${id}`, { method: "DELETE" });
             loadTales();
@@ -516,7 +544,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const deleteActivity = async (id) => {
-        if (!confirm("¿Estás seguro de eliminar esta actividad?")) return;
+        if (!(await confirmDelete("la actividad"))) return;
         try {
             await fetchJson(`${apiBaseUrl}/activities/${id}`, { method: "DELETE" });
             await loadActivities();
@@ -706,7 +734,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     const deleteFavorite = async (id) => {
-        if (!confirm("¿Estás seguro de eliminar este favorito?")) return;
+        if (!(await confirmDelete("el favorito"))) return;
         try {
             await fetchJson(`${apiBaseUrl}/favorites/${id}`, { method: "DELETE" });
             await loadFavorites();
@@ -963,6 +991,15 @@ document.addEventListener("DOMContentLoaded", () => {
             const userIdNum = id ? parseInt(id, 10) : null;
             const password = document.getElementById("userPassword").value.trim();
 
+            const inputs = userForm.querySelectorAll("input[type='text'], input[type='email'], input[type='password']");
+
+            const tooLong = Array.from(inputs).some(input => input.value.length > parseInt(input.getAttribute("maxlength") || "0"));
+
+            if (tooLong) {
+                showAlert("Error", "Algunos campos exceden la longitud máxima permitida.", "error");
+                return;
+            }
+
             const userData = {
                 firstName: document.getElementById("userFirstName").value.trim(),
                 lastName: document.getElementById("userLastName").value.trim(),
@@ -1033,7 +1070,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const deleteUser = async (id) => {
-        if (!confirm("¿Estás seguro de eliminar este usuario?")) return;
+        if (!(await confirmDelete("el usuario"))) return;
         try {
             const response = await fetch(`${apiBaseUrl}/users/${id}`, { method: "DELETE" });
             if (!response.ok) throw new Error(`Error ${response.status}`);
